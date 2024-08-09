@@ -35,4 +35,22 @@ services:
     depends_on:
       - redis
       - database
+    env_file:
+      - ./.env
+
+  flower:
+    build:
+      context: .
+    hostname: flower
+    entrypoint: celery
+    command: -A celery_app.app flower
+    volumes:
+      - ./blogs:/blogs
+    links:
+      - redis
+    depends_on:
+      - redis
+    ports:
+      - "5555:5555"
+
 

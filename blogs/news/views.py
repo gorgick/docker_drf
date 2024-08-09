@@ -1,5 +1,4 @@
 from django.db.models import Prefetch, Count, F
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 
 from news.models import Comment, Blog
