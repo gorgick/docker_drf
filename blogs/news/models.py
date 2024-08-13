@@ -12,10 +12,6 @@ class Blog(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     likes_count = models.PositiveIntegerField(default=0)
 
-    def save(self, *args, save_model=True, **kwargs):
-        if save_model:
-            annotated_likes.delay(self.id)
-        super().save(*args, **kwargs)
 
 
 class Comment(models.Model):
@@ -30,3 +26,12 @@ class Like(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
     mark = models.BooleanField(default=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__mark = self.mark
+
+    def save(self, *args, **kwargs):
+        if self.mark != self.__mark:
+            annotated_likes.delay(Like.objects.filter(blog__id=self.blog_id).first())
+        super().save(*args, **kwargs)
