@@ -33,5 +33,6 @@ class Like(models.Model):
 
     def save(self, *args, **kwargs):
         if self.mark != self.__mark:
-            annotated_likes.delay(Like.objects.filter(blog__id=self.blog_id).first())
+            for like in Like.objects.all():
+                annotated_likes.delay(like.blog.id)
         super().save(*args, **kwargs)

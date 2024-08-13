@@ -10,4 +10,4 @@ def annotated_likes(blog_id):
     time.sleep(5)
     blog = Blog.objects.filter(id=blog_id).prefetch_related('likes').annotate(likes_counted=Count('likes')).first()
     blog.likes_count = blog.likes_counted
-    blog.save(save_model=False)
+    blog.save()
